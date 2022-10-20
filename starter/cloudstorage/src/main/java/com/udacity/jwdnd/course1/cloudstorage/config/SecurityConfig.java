@@ -33,5 +33,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.formLogin()
                 .defaultSuccessUrl("/home", true);
+
+        // 1. this "/login?logout" will add logout as a parameter to
+        // the param, allowing login page to display "you have logged out"
+        // message.
+        // 2. this .permitAll() is important because else only the user
+        // who is logged in can access this "/login?logout"... and this
+        // "/login?logout" is used when user is logged out...
+        http.logout().logoutSuccessUrl("/login?logout").permitAll();
     }
 }
