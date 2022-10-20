@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Error Page</title>
+</head>
+<body>
+<h1>Sorry, something went wrong! </h1>
+<p th:if="${error}" th:text="'Error code is: ' + ${error}">Error message here</p>
+<a th:href="@{/login}">Go to login page</a>
+</body>
+</html>
