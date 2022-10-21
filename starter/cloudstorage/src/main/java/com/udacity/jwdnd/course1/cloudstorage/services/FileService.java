@@ -18,6 +18,11 @@ public class FileService {
     private FileMapper fileMapper;
 
     public int saveFileForUser(MultipartFile multipartFile, String userName) throws IOException {
+        // serves as a check in the backend that we don't have duplicated filename
+        // for this user. Shouldn't happen anyways because the controller already makes sure
+        // that user doesn't have a duplicated file before calling this method.
+        assert isFileAvailableToUser(multipartFile, userName);
+
         int userId = userService.getUserIdFromName(userName);
 
         File fileToSave = new File();
