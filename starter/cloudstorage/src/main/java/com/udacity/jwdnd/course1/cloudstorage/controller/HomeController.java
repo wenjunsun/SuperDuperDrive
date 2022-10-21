@@ -32,7 +32,9 @@ public class HomeController {
     @PostMapping("/uploadFile")
     public String uploadFile(Authentication authentication, @RequestParam("fileUpload") MultipartFile file, Model model) {
         String userName = authentication.getName();
-        if (! fileService.isFileAvailableToUser(file, userName)) {
+        if (file.isEmpty()) {
+            model.addAttribute("error", "You haven't selected a file for upload. Please choose a file before uploading.");
+        } else if (! fileService.isFileAvailableToUser(file, userName)) {
             model.addAttribute("error", "Upload failed. You can't upload two files with the same name!");
         } else {
             try {
