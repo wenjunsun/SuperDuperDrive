@@ -3,6 +3,9 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,12 +44,14 @@ public class HomeController {
 
     // actually this is for downloading the file.
     @GetMapping("/viewFile")
-    public String viewFile(Authentication authentication, @RequestParam("fileId") int fileId, Model model) {
-        System.out.println("I am in viewFile!");
-        // TODO here
+    public ResponseEntity<byte[]> viewFile(Authentication authentication, @RequestParam("fileId") int fileId, Model model) {
         String userName = authentication.getName();
-        model.addAttribute("files", fileService.getAllFilesForUser(userName));
-        return "home";
+        File file = fileService.getFileById(fileId);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(file.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
+                .body(file.getFileData());
     }
 
     // if we do post mapping here it seems like the frontend can't connect to it via <href>.
