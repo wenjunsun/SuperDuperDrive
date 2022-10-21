@@ -49,7 +49,8 @@ public class HomeController {
         return "home";
     }
 
-    @PostMapping("/deleteFile")
+    // if we do post mapping here it seems like the frontend can't connect to it via <href>.
+    @GetMapping("/deleteFile")
     public String deleteFile(Authentication authentication, @RequestParam("filename") String fileName, Model model) {
         System.out.println("I am in deleteFile!");
         // TODO here
