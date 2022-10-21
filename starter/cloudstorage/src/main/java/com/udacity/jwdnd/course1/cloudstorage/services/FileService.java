@@ -35,8 +35,8 @@ public class FileService {
         return fileMapper.getFilesForUser(userId);
     }
 
-    public void deleteFileById(int id) {
-        fileMapper.deleteFileById(id);
+    public int deleteFileById(int id) {
+        return fileMapper.deleteFileById(id);
     }
 
     // a user can only delete a file that is owned by him. -- He can't

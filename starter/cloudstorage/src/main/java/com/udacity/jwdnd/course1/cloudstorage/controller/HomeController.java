@@ -57,7 +57,9 @@ public class HomeController {
         // 1. I can delete a thing that doesn't exist. How should that pan out?
         // 2. Can I delete somebody else's file with this scheme?
         if (fileService.canFileBeDeletedByUser(fileId, userName)) {
-            fileService.deleteFileById(fileId);
+            if (fileService.deleteFileById(fileId) <= 0) {
+                // delete not successful
+            }
         } else {
             // ERROR! how to handle this? TODO
         }
