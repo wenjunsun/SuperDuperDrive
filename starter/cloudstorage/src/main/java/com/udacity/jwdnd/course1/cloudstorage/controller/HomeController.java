@@ -32,12 +32,16 @@ public class HomeController {
     @PostMapping("/uploadFile")
     public String uploadFile(Authentication authentication, @RequestParam("fileUpload") MultipartFile file, Model model) {
         String userName = authentication.getName();
-        try {
-            fileService.saveFileForUser(file, userName);
-            model.addAttribute("saveSuccess", true);
-        } catch (IOException e) {
-            model.addAttribute("saveFailure", true);
-            e.printStackTrace();
+        if (! fileService.isFileAvailableToUser(file, userName)) {
+            model.addAttribute("error", "Upload failed. You can't upload two files with the same name!");
+        } else {
+            try {
+                fileService.saveFileForUser(file, userName);
+                model.addAttribute("saveSuccess", true);
+            } catch (IOException e) {
+                model.addAttribute("saveFailure", true);
+                e.printStackTrace();
+            }
         }
         return "result";
     }

@@ -49,4 +49,13 @@ public class FileService {
         File file = fileMapper.getFileById(fileId);
         return file.getUserId() == userService.getUserIdFromName(userName);
     }
+
+    // a file is available for user to upload if there isn't another
+    // file with the same name already in the database for this user.
+    public boolean isFileAvailableToUser(MultipartFile file, String userName) {
+        String fileName = file.getOriginalFilename();
+        int userId = userService.getUserIdFromName(userName);
+        File fileWithThisNameForUser = fileMapper.getFileForUserWithName(userId, fileName);
+        return fileWithThisNameForUser == null;
+    }
 }
