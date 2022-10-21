@@ -41,7 +41,7 @@ public class HomeController {
 
     // actually this is for downloading the file.
     @GetMapping("/viewFile")
-    public String viewFile(Authentication authentication, @RequestParam("filename") String fileName, Model model) {
+    public String viewFile(Authentication authentication, @RequestParam("fileId") int fileId, Model model) {
         System.out.println("I am in viewFile!");
         // TODO here
         String userName = authentication.getName();
@@ -51,7 +51,7 @@ public class HomeController {
 
     // if we do post mapping here it seems like the frontend can't connect to it via <href>.
     @GetMapping("/deleteFile")
-    public String deleteFile(Authentication authentication, @RequestParam("filename") String fileName, Model model) {
+    public String deleteFile(Authentication authentication, @RequestParam("fileId") int fileId, Model model) {
         System.out.println("I am in deleteFile!");
         // TODO here
         String userName = authentication.getName();
