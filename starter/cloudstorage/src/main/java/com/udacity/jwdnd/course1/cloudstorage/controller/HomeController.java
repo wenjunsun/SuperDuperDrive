@@ -4,6 +4,7 @@ import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -48,6 +49,10 @@ public class HomeController {
         String userName = authentication.getName();
         File file = fileService.getFileById(fileId);
 
+        if (! fileService.isFileAccessibleToUser(fileId, userName)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(file.getContentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
@@ -61,7 +66,7 @@ public class HomeController {
 
         // 1. I can delete a thing that doesn't exist. How should that pan out?
         // 2. Can I delete somebody else's file with this scheme?
-        if (fileService.canFileBeDeletedByUser(fileId, userName)) {
+        if (fileService.isFileAccessibleToUser(fileId, userName)) {
             if (fileService.deleteFileById(fileId) <= 0) {
                 // delete not successful
             }

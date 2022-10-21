@@ -45,7 +45,7 @@ public class FileService {
 
     // a user can only delete a file that is owned by him. -- He can't
     // delete a file owned by other people.
-    public boolean canFileBeDeletedByUser(int fileId, String userName) {
+    public boolean isFileAccessibleToUser(int fileId, String userName) {
         File file = fileMapper.getFileById(fileId);
         return file.getUserId() == userService.getUserIdFromName(userName);
     }
