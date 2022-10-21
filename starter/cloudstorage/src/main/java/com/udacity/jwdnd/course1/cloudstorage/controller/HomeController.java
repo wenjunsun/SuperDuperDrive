@@ -32,15 +32,14 @@ public class HomeController {
     @PostMapping("/uploadFile")
     public String uploadFile(Authentication authentication, @RequestParam("fileUpload") MultipartFile file, Model model) {
         String userName = authentication.getName();
-        // TODO here?
         try {
             fileService.saveFileForUser(file, userName);
+            model.addAttribute("saveSuccess", true);
         } catch (IOException e) {
+            model.addAttribute("saveFailure", true);
             e.printStackTrace();
-            return "error";
         }
-        model.addAttribute("files", fileService.getAllFilesForUser(userName));
-        return "home";
+        return "result";
     }
 
     // actually this is for downloading the file.
@@ -69,12 +68,14 @@ public class HomeController {
         if (fileService.isFileAccessibleToUser(fileId, userName)) {
             if (fileService.deleteFileById(fileId) <= 0) {
                 // delete not successful
+                model.addAttribute("saveFailure", true);
+            } else {
+                model.addAttribute("saveSuccess", true);
             }
         } else {
-            // ERROR! how to handle this? TODO
+            model.addAttribute("error", "An error happened. You can't access other people's files!!!!");
         }
 
-        model.addAttribute("files", fileService.getAllFilesForUser(userName));
-        return "home";
+        return "result";
     }
 }
