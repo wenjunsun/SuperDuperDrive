@@ -149,12 +149,17 @@ public class HomeController {
     @PostMapping("/saveOrEditCredential")
     public String saveOrEditCredential(Authentication authentication, @ModelAttribute("credential") Credential credential, Model model) {
         String userName = authentication.getName();
+        Integer credentialId = credential.getCredentialId();
 
-        int rowsAffected = credentialService.saveOrEditCredentialForUser(credential, userName);
-        if (rowsAffected <= 0) {
-            model.addAttribute("saveFailure", true);
+        if (credentialId != null && ! credentialService.hasAccessToCredByUser(credentialId, userName)) {
+            model.addAttribute("error", "You cannot edit a credential that is not yours!!!");
         } else {
-            model.addAttribute("saveSuccess", true);
+            int rowsAffected = credentialService.saveOrEditCredentialForUser(credential, userName);
+            if (rowsAffected <= 0) {
+                model.addAttribute("saveFailure", true);
+            } else {
+                model.addAttribute("saveSuccess", true);
+            }
         }
         return "result";
     }
@@ -163,11 +168,17 @@ public class HomeController {
     public String deleteCredential(Authentication authentication, @RequestParam("credentialId") int credentialId, Model model) {
         String userName = authentication.getName();
 
-        int rowsAffected = credentialService.deleteCredentialWithId(credentialId);
-        if (rowsAffected <= 0) {
-            model.addAttribute("saveFailure", true);
+        if (! credentialService.canFindCred(credentialId)) {
+            model.addAttribute("error", "You cannot delete a credential that doesn't exist!!!");
+        } else if (! credentialService.hasAccessToCredByUser(credentialId, userName)) {
+            model.addAttribute("error", "You cannot delete a credential that is not yours!!!");
         } else {
-            model.addAttribute("saveSuccess", true);
+            int rowsAffected = credentialService.deleteCredentialWithId(credentialId);
+            if (rowsAffected <= 0) {
+                model.addAttribute("saveFailure", true);
+            } else {
+                model.addAttribute("saveSuccess", true);
+            }
         }
         return "result";
     }

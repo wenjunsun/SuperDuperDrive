@@ -53,4 +53,13 @@ public class CredentialService {
     public int deleteCredentialWithId(int credentialId) {
         return credentialMapper.deleteCredentialById(credentialId);
     }
+
+    public boolean hasAccessToCredByUser(Integer credentialId, String userName) {
+        Credential credential = credentialMapper.getCredentialById(credentialId);
+        return credential.getUserId() == userService.getUserIdFromName(userName);
+    }
+
+    public boolean canFindCred(int credentialId) {
+        return credentialMapper.getCredentialById(credentialId) != null;
+    }
 }
