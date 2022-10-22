@@ -14,6 +14,9 @@ public interface NoteMapper {
     @Options(useGeneratedKeys = true, keyProperty = "noteId", keyColumn = "noteid") // keyProperty is the POJO field name, keyColumn is the SQL table column name.
     int insertNote(Note note);
 
+    @Update("UPDATE NOTES SET notetitle = #{noteTitle}, notedescription = #{noteDescription} WHERE noteid = #{noteId}")
+    int updateNote(Note note);
+
     @Delete("DELETE FROM NOTES WHERE noteid = #{noteId}")
     int deleteNote(int noteId);
 }

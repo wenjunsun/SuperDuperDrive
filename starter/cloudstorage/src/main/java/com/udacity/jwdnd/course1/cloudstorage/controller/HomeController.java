@@ -93,11 +93,11 @@ public class HomeController {
         return "result";
     }
 
-    @PostMapping("/uploadNote")
+    @PostMapping("/saveOrEditNote")
     public String uploadNote(Authentication authentication, @ModelAttribute("noteObject") Note noteObject, Model model) {
         String userName = authentication.getName();
 
-        noteService.saveNoteForUser(noteObject, userName);
+        noteService.saveOrEditNoteForUser(noteObject, userName);
         model.addAttribute("saveSuccess", true);
         return "result";
     }

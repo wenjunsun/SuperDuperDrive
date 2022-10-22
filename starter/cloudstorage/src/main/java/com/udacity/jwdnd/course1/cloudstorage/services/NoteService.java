@@ -20,9 +20,15 @@ public class NoteService {
         return noteMapper.getNotesForUser(userId);
     }
 
-    public int saveNoteForUser(Note note, String userName) {
+    // if note.noteId == null, then this is a fresh note, and we
+    // will save it. if noteId != null, we edit the note instead.
+    public int saveOrEditNoteForUser(Note note, String userName) {
         note.setUserId(userService.getUserIdFromName(userName));
-        return noteMapper.insertNote(note);
+        if (note.getNoteId() == null) {
+            return noteMapper.insertNote(note);
+        } else {
+            return noteMapper.updateNote(note);
+        }
     }
 
     public int deleteNoteWithId(int noteId) {
