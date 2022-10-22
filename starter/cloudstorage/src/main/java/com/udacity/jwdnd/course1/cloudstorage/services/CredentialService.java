@@ -35,7 +35,6 @@ public class CredentialService {
         }
     }
 
-    // get list of unencrypted credentials for a user.
     public List<Credential> getAllCredentialsForUser(String userName) {
         int userId = userService.getUserIdFromName(userName);
         return credentialMapper.getCredentialsForUser(userId);
