@@ -18,7 +18,17 @@ public class CredentialService {
 
     public int saveOrEditCredentialForUser(Credential credential, String userName) {
         int userId = userService.getUserIdFromName(userName);
-        String encryptionKey = encryptionService.getAEncryptionKey();
+        Integer credentialId = credential.getCredentialId();
+        String encryptionKey;
+        if (credentialId == null) {
+            encryptionKey = encryptionService.getAEncryptionKey();
+        } else {
+            // means we already have this credential in database. In that case,
+            // instead of generating a new encryption key, we can just use the old one
+            // in the database. this has the added benefit of when user click on save and if
+            // he has the same password as before, the encrypted password won't change for him.
+            encryptionKey = credentialMapper.getCredentialById(credentialId).getKey();
+        }
         String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), encryptionKey);
 
         // set correct fields on credential object that we want to save.
@@ -26,7 +36,7 @@ public class CredentialService {
         credential.setKey(encryptionKey);
         credential.setPassword(encryptedPassword);
 
-        if (credential.getCredentialId() == null) {
+        if (credentialId == null) {
             // save
             return credentialMapper.insertCredential(credential);
         } else {
