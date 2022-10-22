@@ -60,12 +60,16 @@ public class HomeController {
     @GetMapping("/viewFile")
     public ResponseEntity<byte[]> viewFile(Authentication authentication, @RequestParam("fileId") int fileId, Model model) {
         String userName = authentication.getName();
-        File file = fileService.getFileById(fileId);
 
-        if (! fileService.isFileAccessibleToUser(fileId, userName)) {
+        if (! fileService.canFindFile(fileId)) {
+            // can't view/download a file that doesn't exist
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } else if (! fileService.isFileAccessibleToUser(fileId, userName)) {
+            // can't view/download a file that isn't yours.
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
+        File file = fileService.getFileById(fileId);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(file.getContentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
@@ -77,17 +81,17 @@ public class HomeController {
     public String deleteFile(Authentication authentication, @RequestParam("fileId") int fileId, Model model) {
         String userName = authentication.getName();
 
-        // 1. I can delete a thing that doesn't exist. How should that pan out?
-        // 2. Can I delete somebody else's file with this scheme?
-        if (fileService.isFileAccessibleToUser(fileId, userName)) {
+        if (! fileService.canFindFile(fileId)) {
+            model.addAttribute("error", "you can't delete a file that doesn't exist");
+        } else if (! fileService.isFileAccessibleToUser(fileId, userName)) {
+            model.addAttribute("error", "An error happened. You can't access other people's files!!!!");
+        } else {
             if (fileService.deleteFileById(fileId) <= 0) {
                 // delete not successful
                 model.addAttribute("saveFailure", true);
             } else {
                 model.addAttribute("saveSuccess", true);
             }
-        } else {
-            model.addAttribute("error", "An error happened. You can't access other people's files!!!!");
         }
 
         return "result";

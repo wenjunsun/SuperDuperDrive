@@ -63,4 +63,8 @@ public class FileService {
         File fileWithThisNameForUser = fileMapper.getFileForUserWithName(userId, fileName);
         return fileWithThisNameForUser == null;
     }
+
+    public boolean canFindFile(int fileId) {
+        return getFileById(fileId) != null;
+    }
 }
