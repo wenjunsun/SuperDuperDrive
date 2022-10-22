@@ -1,7 +1,9 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
+import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
+import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,11 +23,17 @@ public class HomeController {
 
     @Autowired
     private FileService fileService;
+    @Autowired
+    private NoteService noteService;
 
     @GetMapping
-    public String getHomePage(Authentication authentication, Model model) {
+    public String getHomePage(Authentication authentication, @ModelAttribute("noteObject") Note noteObject, Model model) {
         String userName = authentication.getName();
+
         model.addAttribute("files", fileService.getAllFilesForUser(userName));
+        model.addAttribute("notes", noteService.getAllNotesForUser(userName));
+        model.addAttribute("noteObject", new Note());
+
         return "home";
     }
 
@@ -82,6 +90,15 @@ public class HomeController {
             model.addAttribute("error", "An error happened. You can't access other people's files!!!!");
         }
 
+        return "result";
+    }
+
+    @PostMapping("/uploadNote")
+    public String uploadNote(Authentication authentication, @ModelAttribute("noteObject") Note noteObject, Model model) {
+        String userName = authentication.getName();
+
+        noteService.saveNoteForUser(noteObject, userName);
+        model.addAttribute("saveSuccess", true);
         return "result";
     }
 }

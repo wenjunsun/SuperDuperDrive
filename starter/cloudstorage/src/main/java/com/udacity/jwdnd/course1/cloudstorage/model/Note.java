@@ -6,11 +6,11 @@ public class Note {
     private String noteDescription;
     private int userId;
 
-    public int getNoteId() {
+    public Integer getNoteId() {
         return noteId;
     }
 
-    public void setNoteId(int noteId) {
+    public void setNoteId(Integer noteId) {
         this.noteId = noteId;
     }
 
