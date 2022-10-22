@@ -158,4 +158,17 @@ public class HomeController {
         }
         return "result";
     }
+
+    @GetMapping("/deleteCredential")
+    public String deleteCredential(Authentication authentication, @RequestParam("credentialId") int credentialId, Model model) {
+        String userName = authentication.getName();
+
+        int rowsAffected = credentialService.deleteCredentialWithId(credentialId);
+        if (rowsAffected <= 0) {
+            model.addAttribute("saveFailure", true);
+        } else {
+            model.addAttribute("saveSuccess", true);
+        }
+        return "result";
+    }
 }
