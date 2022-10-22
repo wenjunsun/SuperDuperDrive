@@ -10,6 +10,9 @@ public interface NoteMapper {
     @Select("SELECT * FROM NOTES WHERE userid = #{userId}")
     List<Note> getNotesForUser(int userId);
 
+    @Select("SELECT * FROM NOTES WHERE noteid = #{noteId}")
+    Note getNoteById(int noteId);
+
     @Insert("INSERT INTO NOTES (notetitle, notedescription, userid) VALUES(#{noteTitle}, #{noteDescription}, #{userId})")
     @Options(useGeneratedKeys = true, keyProperty = "noteId", keyColumn = "noteid") // keyProperty is the POJO field name, keyColumn is the SQL table column name.
     int insertNote(Note note);

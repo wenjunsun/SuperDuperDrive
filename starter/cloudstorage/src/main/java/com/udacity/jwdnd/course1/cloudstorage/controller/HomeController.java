@@ -96,9 +96,18 @@ public class HomeController {
     @PostMapping("/saveOrEditNote")
     public String saveOrEditNote(Authentication authentication, @ModelAttribute("noteObject") Note noteObject, Model model) {
         String userName = authentication.getName();
+        Integer noteId = noteObject.getNoteId();
 
-        noteService.saveOrEditNoteForUser(noteObject, userName);
-        model.addAttribute("saveSuccess", true);
+        if (noteId != null && ! noteService.hasAccessToNoteByUser(noteId, userName)) {
+            model.addAttribute("error", "You cannot edit a note that is not yours!!!");
+        } else {
+            int rowsAffected = noteService.saveOrEditNoteForUser(noteObject, userName);
+            if (rowsAffected <= 0) {
+                model.addAttribute("saveFailure", true);
+            } else {
+                model.addAttribute("saveSuccess", true);
+            }
+        }
         return "result";
     }
 
@@ -106,8 +115,20 @@ public class HomeController {
     public String deleteNote(Authentication authentication, @RequestParam("noteId") int noteId, Model model) {
         String userName = authentication.getName();
 
-        noteService.deleteNoteWithId(noteId);
-        model.addAttribute("saveSuccess", true);
+        // can't delete a note that doesn't exist
+        if (! noteService.canFindNote(noteId)) {
+            model.addAttribute("error", "You cannot delete a note that doesn't exist!!!");
+        } else if (! noteService.hasAccessToNoteByUser(noteId, userName)) {
+            // can't delete a note that is not yours!
+            model.addAttribute("error", "You cannot delete a note that is not yours!!!");
+        } else {
+            int rowsAffected = noteService.deleteNoteWithId(noteId);
+            if (rowsAffected <= 0) {
+                model.addAttribute("saveFailure", true);
+            } else {
+                model.addAttribute("saveSuccess", true);
+            }
+        }
         return "result";
     }
 }

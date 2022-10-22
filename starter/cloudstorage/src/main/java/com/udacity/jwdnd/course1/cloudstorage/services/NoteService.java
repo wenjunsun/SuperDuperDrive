@@ -34,4 +34,13 @@ public class NoteService {
     public int deleteNoteWithId(int noteId) {
         return noteMapper.deleteNote(noteId);
     }
+
+    public boolean hasAccessToNoteByUser(int noteId, String userName) {
+        Note thisNote = noteMapper.getNoteById(noteId);
+        return userService.getUserIdFromName(userName) == thisNote.getUserId();
+    }
+
+    public boolean canFindNote(int noteId) {
+        return noteMapper.getNoteById(noteId) != null;
+    }
 }
