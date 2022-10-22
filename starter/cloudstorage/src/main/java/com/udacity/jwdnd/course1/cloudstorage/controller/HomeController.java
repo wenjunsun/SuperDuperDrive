@@ -94,7 +94,7 @@ public class HomeController {
     }
 
     @PostMapping("/saveOrEditNote")
-    public String uploadNote(Authentication authentication, @ModelAttribute("noteObject") Note noteObject, Model model) {
+    public String saveOrEditNote(Authentication authentication, @ModelAttribute("noteObject") Note noteObject, Model model) {
         String userName = authentication.getName();
 
         noteService.saveOrEditNoteForUser(noteObject, userName);
