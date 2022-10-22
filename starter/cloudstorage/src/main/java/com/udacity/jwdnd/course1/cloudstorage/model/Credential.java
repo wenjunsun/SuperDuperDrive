@@ -8,11 +8,11 @@ public class Credential {
     private String password;
     private int userId;
 
-    public int getCredentialId() {
+    public Integer getCredentialId() {
         return credentialId;
     }
 
-    public void setCredentialId(int credentialId) {
+    public void setCredentialId(Integer credentialId) {
         this.credentialId = credentialId;
     }
 

@@ -1,7 +1,10 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
+import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +28,21 @@ public class HomeController {
     private FileService fileService;
     @Autowired
     private NoteService noteService;
+    @Autowired
+    private CredentialService credentialService;
+    @Autowired
+    private EncryptionService encryptionService;
 
     @GetMapping
-    public String getHomePage(Authentication authentication, @ModelAttribute("noteObject") Note noteObject, Model model) {
+    public String getHomePage(Authentication authentication, Model model) {
         String userName = authentication.getName();
 
         model.addAttribute("files", fileService.getAllFilesForUser(userName));
         model.addAttribute("notes", noteService.getAllNotesForUser(userName));
         model.addAttribute("noteObject", new Note());
+        model.addAttribute("credentials", credentialService.getAllCredentialsForUser(userName));
+        model.addAttribute("credential", new Credential());
+        model.addAttribute("encryptionService", encryptionService);
 
         return "home";
     }
@@ -132,6 +142,19 @@ public class HomeController {
             } else {
                 model.addAttribute("saveSuccess", true);
             }
+        }
+        return "result";
+    }
+
+    @PostMapping("/saveOrEditCredential")
+    public String saveOrEditCredential(Authentication authentication, @ModelAttribute("credential") Credential credential, Model model) {
+        String userName = authentication.getName();
+
+        int rowsAffected = credentialService.saveOrEditCredentialForUser(credential, userName);
+        if (rowsAffected <= 0) {
+            model.addAttribute("saveFailure", true);
+        } else {
+            model.addAttribute("saveSuccess", true);
         }
         return "result";
     }
