@@ -7,6 +7,10 @@
 <body>
 <h1>Sorry, something went wrong! </h1>
 <p th:if="${error}" th:text="'Error code is: ' + ${error}">Error message here</p>
-<a th:href="@{/login}">Go to login page</a>
+<p> if the error code is 404, it means you are trying to access a resource/URL that doesn't exist. For example,
+/home resource is available, but /home123 is not available. Please make sure you enter a valid URL!
+If the error code is 500, it means there is an internal server error! Please wait until our engineer can fix this bug.
+Thanks for your patience!</p>
+<a th:href="@{/home}">Go to home page</a>
 </body>
 </html>
