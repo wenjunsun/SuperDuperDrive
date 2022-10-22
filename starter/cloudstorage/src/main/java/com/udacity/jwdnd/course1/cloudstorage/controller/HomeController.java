@@ -101,4 +101,13 @@ public class HomeController {
         model.addAttribute("saveSuccess", true);
         return "result";
     }
+
+    @GetMapping("/deleteNote")
+    public String deleteNote(Authentication authentication, @RequestParam("noteId") int noteId, Model model) {
+        String userName = authentication.getName();
+
+        noteService.deleteNoteWithId(noteId);
+        model.addAttribute("saveSuccess", true);
+        return "result";
+    }
 }

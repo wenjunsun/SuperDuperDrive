@@ -24,4 +24,8 @@ public class NoteService {
         note.setUserId(userService.getUserIdFromName(userName));
         return noteMapper.insertNote(note);
     }
+
+    public int deleteNoteWithId(int noteId) {
+        return noteMapper.deleteNote(noteId);
+    }
 }
