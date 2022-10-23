@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -20,11 +21,6 @@ class CloudStorageApplicationTests {
 	private int port;
 
 	private WebDriver driver;
-
-	private static final String testFirstName = "first";
-	private static final String testLastName = "last";
-	private static final String testUserName = "first last";
-	private static final String testPassword = "123456";
 
 	@BeforeAll
 	static void beforeAll() {
@@ -229,8 +225,8 @@ class CloudStorageApplicationTests {
 	@Test
 	public void testHomePageAccess() {
 		// sign up a new user, log that user in, verify that they can access homepage.
-		doMockSignUp(testFirstName, testLastName, testUserName, testPassword);
-		doLogIn(testUserName, testPassword);
+		doMockSignUp("home page access", "test", "homePageTest", "123");
+		doLogIn("homePageTest", "123");
 		driver.get("http://localhost:" + this.port + "/home");
 		Assertions.assertEquals("http://localhost:" + this.port + "/home", driver.getCurrentUrl());
 		Assertions.assertEquals("Home", driver.getTitle());
@@ -243,7 +239,23 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testCreateNote() {
+		doMockSignUp("create note", "test", "createNoteTest", "123");
+		doLogIn("createNoteTest", "123");
 
+		String testTitle = "test title";
+		String testDescription = "test description";
+
+		HomePage homePage = new HomePage(driver);
+		homePage.navigateToNotesTab();
+		homePage.addNote(testTitle, testDescription);
+
+		driver.get("http://localhost:" + this.port + "/home");
+		homePage = new HomePage(driver);
+		homePage.navigateToNotesTab();
+		Note firstNote = homePage.getFirstNote();
+
+		Assertions.assertEquals(testTitle, firstNote.getNoteTitle());
+		Assertions.assertEquals(testDescription, firstNote.getNoteDescription());
 	}
 
 	@Test

@@ -61,7 +61,7 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
-                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
+                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()" id="addNoteButton">
                             + Add a New Note
                         </button>
 
@@ -84,8 +84,8 @@
                                                     onclick="showNoteModal(this.getAttribute('data-noteId'), this.getAttribute('data-noteTitle'), this.getAttribute('data-noteDescription'))">Edit</button>
                                             <a class="btn btn-danger" th:href="@{/home/deleteNote(noteId=${note.noteId})}">Delete</a>
                                         </td>
-                                        <th scope="row" th:text="${note.noteTitle}">Example Note Title</th>
-                                        <td th:text="${note.noteDescription}">Example Note Description </td>
+                                        <th scope="row" th:text="${note.noteTitle}" class="note-title-content">Example Note Title</th>
+                                        <td th:text="${note.noteDescription}" class="note-description-content">Example Note Description </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -116,7 +116,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
+                                        <button type="button" class="btn btn-primary" onclick="$('#noteSubmit').click();" id="noteSaveButton">Save changes</button>
                                     </div>
                                 </div>
                             </div>
