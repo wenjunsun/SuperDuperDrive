@@ -21,6 +21,11 @@ class CloudStorageApplicationTests {
 
 	private WebDriver driver;
 
+	private static final String testFirstName = "first";
+	private static final String testLastName = "last";
+	private static final String testUserName = "first last";
+	private static final String testPassword = "123456";
+
 	@BeforeAll
 	static void beforeAll() {
 		WebDriverManager.chromedriver().setup();
@@ -119,6 +124,12 @@ class CloudStorageApplicationTests {
 
 	}
 
+	// a helper method that logs out a user. Assumes user is in the home page.
+	private void doLogOut() {
+		assert driver.getTitle().equals("Home");
+		driver.findElement(By.id("logoutButton")).click();
+	}
+
 	/**
 	 * PLEASE DO NOT DELETE THIS TEST. You may modify this test to work with the 
 	 * rest of your code. 
@@ -200,6 +211,63 @@ class CloudStorageApplicationTests {
 
 	}
 
+	@Test
+	public void testUnauthorizedUserPageAccess() {
+		// user who isn't logged in should
+		// 1. be able to access signup and login page
+		driver.get("http://localhost:" + this.port + "/login");
+		Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
+		driver.get("http://localhost:" + this.port + "/signup");
+		Assertions.assertEquals("http://localhost:" + this.port + "/signup", driver.getCurrentUrl());
+		// 2. not be able to access home page.
+		driver.get("http://localhost:" + this.port + "/home");
+		Assertions.assertNotEquals("http://localhost:" + this.port + "/home", driver.getCurrentUrl());
+		// should be redirected to login page if trying to access home page without logging in.
+		Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
+	}
 
+	@Test
+	public void testHomePageAccess() {
+		// sign up a new user, log that user in, verify that they can access homepage.
+		doMockSignUp(testFirstName, testLastName, testUserName, testPassword);
+		doLogIn(testUserName, testPassword);
+		driver.get("http://localhost:" + this.port + "/home");
+		Assertions.assertEquals("http://localhost:" + this.port + "/home", driver.getCurrentUrl());
+		Assertions.assertEquals("Home", driver.getTitle());
+		// then log out that user, and verify that home page is no longer available
+		doLogOut();
+		driver.get("http://localhost:" + this.port + "/home");
+		Assertions.assertNotEquals("http://localhost:" + this.port + "/home", driver.getCurrentUrl());
+		Assertions.assertNotEquals("Home", driver.getTitle());
+	}
 
+	@Test
+	public void testCreateNote() {
+
+	}
+
+	@Test
+	public void testEditNote() {
+
+	}
+
+	@Test
+	public void testDeleteNote() {
+
+	}
+
+	@Test
+	public void testCreateCredential() {
+
+	}
+
+	@Test
+	public void testViewAndEditCredential() {
+
+	}
+
+	@Test
+	public void testDeleteCredential() {
+
+	}
 }
