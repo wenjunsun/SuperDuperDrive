@@ -291,7 +291,30 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testDeleteNote() {
+		doMockSignUp("delete note", "test", "deleteNoteTest", "123");
+		doLogIn("deleteNoteTest", "123");
 
+		String testTitle = "test title";
+		String testDescription = "test description";
+
+		// create note
+		HomePage homePage = new HomePage(driver);
+		homePage.navigateToNotesTab();
+		homePage.addNote(testTitle, testDescription);
+
+		// delete note
+		driver.get("http://localhost:" + this.port + "/home");
+		homePage = new HomePage(driver);
+		homePage.navigateToNotesTab();
+		homePage.deleteFirstNote();
+
+		// get note, verify it is null.
+		driver.get("http://localhost:" + this.port + "/home");
+		homePage = new HomePage(driver);
+		homePage.navigateToNotesTab();
+		Note firstNote = homePage.getFirstNote();
+
+		Assertions.assertNull(firstNote);
 	}
 
 	@Test

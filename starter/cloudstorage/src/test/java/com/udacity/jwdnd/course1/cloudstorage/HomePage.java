@@ -2,6 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -31,8 +32,11 @@ public class HomePage {
     @FindBy(className = "note-description-content")
     private WebElement firstNoteDescriptionContent;
 
-    @FindBy(id = "noteEditButton")
+    @FindBy(className = "note-edit-button")
     private WebElement noteEditButton;
+
+    @FindBy(className = "note-delete-button")
+    private WebElement noteDeleteButton;
 
     private WebDriverWait webDriverWait;
 
@@ -61,9 +65,14 @@ public class HomePage {
         noteSaveButton.click();
     }
 
+    // if there is first note, get first note. if there isn't any note on the page, return null.
     public Note getFirstNote() {
-        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.className("note-title-content")));
-        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.className("note-description-content")));
+        try {
+            webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.className("note-title-content")));
+            webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.className("note-description-content")));
+        } catch (TimeoutException timeoutException) {
+            return null;
+        }
 
         Note note = new Note();
         note.setNoteTitle(firstNoteTitleContent.getText());
@@ -88,5 +97,10 @@ public class HomePage {
         noteDescriptionInput.sendKeys(newDescription);
 
         noteSaveButton.click();
+    }
+
+    public void deleteFirstNote() {
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(noteDeleteButton));
+        noteDeleteButton.click();
     }
 }
