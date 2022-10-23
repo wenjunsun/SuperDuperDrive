@@ -260,7 +260,33 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testEditNote() {
+		doMockSignUp("edit note", "test", "editNoteTest", "123");
+		doLogIn("editNoteTest", "123");
 
+		String testTitle = "test title";
+		String testDescription = "test description";
+		String newTitle = "a different title!";
+		String newDescription = "a different description!";
+
+		// create existing note
+		HomePage homePage = new HomePage(driver);
+		homePage.navigateToNotesTab();
+		homePage.addNote(testTitle, testDescription);
+
+		// edit existing note
+		driver.get("http://localhost:" + this.port + "/home");
+		homePage = new HomePage(driver);
+		homePage.navigateToNotesTab();
+		homePage.editFirstNote(newTitle, newDescription);
+
+		// get note and verify the result is new note, not old note.
+		driver.get("http://localhost:" + this.port + "/home");
+		homePage = new HomePage(driver);
+		homePage.navigateToNotesTab();
+		Note newNote = homePage.getFirstNote();
+
+		Assertions.assertEquals(newTitle, newNote.getNoteTitle());
+		Assertions.assertEquals(newDescription, newNote.getNoteDescription());
 	}
 
 	@Test

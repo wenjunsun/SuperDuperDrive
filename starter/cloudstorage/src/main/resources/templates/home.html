@@ -78,6 +78,7 @@
                                     <tr th:each="note: ${notes}">
                                         <td>
                                             <button type="button" class="btn btn-success"
+                                                    id="noteEditButton"
                                                     th:data-noteId="${note.getNoteId()}"
                                                     th:data-noteTitle="${note.getNoteTitle()}"
                                                     th:data-noteDescription="${note.getNoteDescription()}"

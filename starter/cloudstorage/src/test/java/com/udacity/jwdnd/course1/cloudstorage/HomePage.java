@@ -31,6 +31,9 @@ public class HomePage {
     @FindBy(className = "note-description-content")
     private WebElement firstNoteDescriptionContent;
 
+    @FindBy(id = "noteEditButton")
+    private WebElement noteEditButton;
+
     private WebDriverWait webDriverWait;
 
     public HomePage(WebDriver driver) {
@@ -66,5 +69,24 @@ public class HomePage {
         note.setNoteTitle(firstNoteTitleContent.getText());
         note.setNoteDescription(firstNoteDescriptionContent.getText());
         return note;
+    }
+
+    public void editFirstNote(String newTitle, String newDescription) {
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(noteEditButton));
+        noteEditButton.click();
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id("noteSaveButton")));
+
+        noteTitleInput.click();
+        noteTitleInput.clear();
+        noteTitleInput.sendKeys(newTitle);
+
+        noteDescriptionInput.click();
+        noteDescriptionInput.clear();
+        noteDescriptionInput.sendKeys(newDescription);
+
+        noteSaveButton.click();
     }
 }
