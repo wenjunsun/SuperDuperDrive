@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
@@ -319,16 +320,97 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testCreateCredential() {
+		doMockSignUp("create cred", "test", "createCredTest", "123");
+		doLogIn("createCredTest", "123");
 
+		String testURL = "http:test.com";
+		String testUserName = "test user";
+		String testPassword = "testPassword";
+
+		HomePage homePage = new HomePage(driver);
+		homePage.navigateToCredentialsTab();
+		homePage.addCredential(testURL, testUserName, testPassword);
+
+		driver.get("http://localhost:" + this.port + "/home");
+		homePage = new HomePage(driver);
+		homePage.navigateToCredentialsTab();
+		Credential credential = homePage.getFirstCredentialEncrypted();
+
+		Assertions.assertEquals(testURL, credential.getUrl());
+		Assertions.assertEquals(testUserName, credential.getUserName());
+		// test that the displayed password is encrypted.
+		Assertions.assertNotEquals(testPassword, credential.getPassword());
 	}
 
 	@Test
 	public void testViewAndEditCredential() {
+		doMockSignUp("edit cred", "test", "editCredTest", "123");
+		doLogIn("editCredTest", "123");
 
+		String testURL = "http:test.com";
+		String testUserName = "test user";
+		String testPassword = "testPassword";
+		String newURL = "http:newURL.com";
+		String newUserName = "new user!!!";
+		String newPassword = "new password!!!";
+
+		HomePage homePage = new HomePage(driver);
+		homePage.navigateToCredentialsTab();
+		homePage.addCredential(testURL, testUserName, testPassword);
+
+		// test we can view unencrypted password in the edit pane
+		driver.get("http://localhost:" + this.port + "/home");
+		homePage = new HomePage(driver);
+		homePage.navigateToCredentialsTab();
+		Credential credential = homePage.getFirstCredentialDecrypted();
+
+		Assertions.assertEquals(testURL, credential.getUrl());
+		Assertions.assertEquals(testUserName, credential.getUserName());
+		Assertions.assertEquals(testPassword, credential.getPassword());
+
+		// test we can edit credential
+		driver.get("http://localhost:" + this.port + "/home");
+		homePage = new HomePage(driver);
+		homePage.navigateToCredentialsTab();
+		homePage.editFirstCredential(newURL, newUserName, newPassword);
+
+		driver.get("http://localhost:" + this.port + "/home");
+		homePage = new HomePage(driver);
+		homePage.navigateToCredentialsTab();
+		Credential newCredential = homePage.getFirstCredentialDecrypted();
+
+		Assertions.assertEquals(newURL, newCredential.getUrl());
+		Assertions.assertEquals(newUserName, newCredential.getUserName());
+		Assertions.assertEquals(newPassword, newCredential.getPassword());
 	}
 
 	@Test
 	public void testDeleteCredential() {
+		doMockSignUp("delete cred", "test", "deleteCredTest", "123");
+		doLogIn("deleteCredTest", "123");
+
+		String testURL = "http:test.com";
+		String testUserName = "test user";
+		String testPassword = "testPassword";
+
+		// add credential
+		HomePage homePage = new HomePage(driver);
+		homePage.navigateToCredentialsTab();
+		homePage.addCredential(testURL, testUserName, testPassword);
+
+		// delete credential
+		driver.get("http://localhost:" + this.port + "/home");
+		homePage = new HomePage(driver);
+		homePage.navigateToCredentialsTab();
+		homePage.deleteFirstCredential();
+
+		// go to credentials tab again, verify we don't have any credentials there.
+		driver.get("http://localhost:" + this.port + "/home");
+		homePage = new HomePage(driver);
+		homePage.navigateToCredentialsTab();
+		Credential credential = homePage.getFirstCredentialEncrypted();
+
+		Assertions.assertNull(credential);
 
 	}
 }

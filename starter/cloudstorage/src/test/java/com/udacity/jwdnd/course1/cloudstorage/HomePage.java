@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -37,6 +38,39 @@ public class HomePage {
 
     @FindBy(className = "note-delete-button")
     private WebElement noteDeleteButton;
+
+    @FindBy(id = "nav-credentials-tab")
+    private WebElement navigateToCredentialsTab;
+
+    @FindBy(id = "addCredentialButton")
+    private WebElement addCredentialButton;
+
+    @FindBy(id = "saveCredentialButton")
+    private WebElement saveCredentialButton;
+
+    @FindBy(id = "credential-url")
+    private WebElement credentialURLInput;
+
+    @FindBy(id = "credential-username")
+    private WebElement credentialUserNameInput;
+
+    @FindBy(id = "credential-password")
+    private WebElement credentialPasswordInput;
+
+    @FindBy(className = "credential-url-content")
+    private WebElement firstCredentialURLContent;
+
+    @FindBy(className = "credential-username-content")
+    private WebElement firstCredentialUserNameContent;
+
+    @FindBy(className = "credential-password-content")
+    private WebElement firstCredentialPasswordContent;
+
+    @FindBy(className = "credential-edit-button")
+    private WebElement firstCredentialEditButton;
+
+    @FindBy(className = "credential-delete-button")
+    private WebElement firstCredentialDeleteButton;
 
     private WebDriverWait webDriverWait;
 
@@ -102,5 +136,92 @@ public class HomePage {
     public void deleteFirstNote() {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(noteDeleteButton));
         noteDeleteButton.click();
+    }
+
+    public void navigateToCredentialsTab() {
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(navigateToCredentialsTab));
+        navigateToCredentialsTab.click();
+    }
+
+    public void addCredential(String url, String userName, String password) {
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(addCredentialButton));
+        addCredentialButton.click();
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(saveCredentialButton));
+
+        credentialURLInput.sendKeys(url);
+        credentialUserNameInput.sendKeys(userName);
+        credentialPasswordInput.sendKeys(password);
+        saveCredentialButton.click();
+    }
+
+    // this will grab the first credential in the credentials tab,
+    // thus will return an encrypted version of the first credential.
+    public Credential getFirstCredentialEncrypted() {
+        try {
+            webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.className("credential-url-content")));
+            webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.className("credential-username-content")));
+            webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.className("credential-password-content")));
+        } catch (TimeoutException timeoutException) {
+            return null;
+        }
+
+        Credential credential = new Credential();
+        credential.setUrl(firstCredentialURLContent.getText());
+        credential.setUserName(firstCredentialUserNameContent.getText());
+        credential.setPassword(firstCredentialPasswordContent.getText());
+        return credential;
+    }
+
+    // this will go to the edit/viewing pane of first credential
+    // and get the unencrypted version of the first credential.
+    public Credential getFirstCredentialDecrypted() {
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(firstCredentialEditButton));
+        firstCredentialEditButton.click();
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+
+        Credential credential = new Credential();
+        // has to use this .getAttribute("value") here instead of .getText() because
+        // the variables here are HTML inputs instead of text HTML tags. To get the value inputted by
+        // user into an HTML input we need to use input.value.
+        credential.setUrl(credentialURLInput.getAttribute("value"));
+        credential.setUserName(credentialUserNameInput.getAttribute("value"));
+        credential.setPassword(credentialPasswordInput.getAttribute("value"));
+        return credential;
+    }
+
+    public void editFirstCredential(String newUrl, String newUserName, String newPassword) {
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(firstCredentialEditButton));
+        firstCredentialEditButton.click();
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(saveCredentialButton));
+
+        credentialURLInput.click();
+        credentialURLInput.clear();
+        credentialURLInput.sendKeys(newUrl);
+
+        credentialUserNameInput.click();
+        credentialUserNameInput.clear();
+        credentialUserNameInput.sendKeys(newUserName);
+
+        credentialPasswordInput.click();
+        credentialPasswordInput.clear();
+        credentialPasswordInput.sendKeys(newPassword);
+
+        saveCredentialButton.click();
+    }
+
+    public void deleteFirstCredential() {
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(firstCredentialDeleteButton));
+        firstCredentialDeleteButton.click();
     }
 }
